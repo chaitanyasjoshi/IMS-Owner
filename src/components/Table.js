@@ -228,7 +228,7 @@ export default class Table extends Component {
                   </p>
                 </div>
               ) : (
-                <div className='shadow overflow-hidden border-b border-gray-200 sm:rounded-lg'>
+                <div className='shadow overflow-hidden border-b border-gray-200 sm:rounded-lg animate__animated animate__fadeInUp'>
                   <table className='min-w-full divide-y divide-gray-200'>
                     <tbody className='bg-white divide-y divide-gray-200'>
                       {this.state.requests.map((ele, i) => {

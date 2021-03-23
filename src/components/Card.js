@@ -1,6 +1,8 @@
 import { React, useState } from 'react';
 import gradient from 'random-gradient';
 
+import 'animate.css';
+
 export default function Card(props) {
   const [decryptedData, setDecryptedData] = useState(null);
 
@@ -48,7 +50,7 @@ export default function Card(props) {
       style={{
         background: gradient(`${props.issuer + props.name}`),
       }}
-      className='w-96 h-56 m-4 rounded-xl text-gray-100 shadow-md transition-transform transform hover:scale-105 hover:shadow-2xl'
+      className='w-96 h-56 m-4 rounded-xl text-gray-100 shadow-md transition-transform transform hover:scale-105 hover:shadow-2xl animate__animated animate__fadeInUp'
     >
       <div className='w-full p-6 absolute'>
         <div className='flex justify-center'>
