@@ -235,7 +235,6 @@ export default class Table extends Component {
                         return (
                           <Request
                             key={i}
-                            store={store}
                             user={this.state.user}
                             requestor={ele[0]}
                             requestorUname={ele[1]}

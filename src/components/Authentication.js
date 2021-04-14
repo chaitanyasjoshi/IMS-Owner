@@ -37,19 +37,7 @@ export default function Authentication(props) {
           if (err) {
             return console.error(err);
           }
-          store.addNotification({
-            title: 'Register',
-            message: 'Registered successfully',
-            type: 'success', // 'default', 'success', 'info', 'warning'
-            container: 'top-right', // where to position the notifications
-            animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-            animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-            dismiss: {
-              duration: 2000,
-              showIcon: true,
-              pauseOnHover: true,
-            },
-          });
+          notify('Register', 'Registered successfully', 'success');
         }
       );
   };
@@ -82,40 +70,32 @@ export default function Authentication(props) {
 
   const handleLogin = () => {
     if (username === '') {
-      store.addNotification({
-        title: 'Invalid username',
-        message: 'Username cannot be empty',
-        type: 'danger', // 'default', 'success', 'info', 'warning'
-        container: 'top-right', // where to position the notifications
-        animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-        animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-        dismiss: {
-          duration: 2000,
-          showIcon: true,
-          pauseOnHover: true,
-        },
-      });
+      notify('Invalid username', 'Username cannot be empty', 'danger');
     } else {
       auth.login(username).then((message) => {
         if (auth.isAuthenticated()) {
           props.history.push('/dashboard');
         } else {
-          store.addNotification({
-            title: 'Login failed',
-            message: message,
-            type: 'danger', // 'default', 'success', 'info', 'warning'
-            container: 'top-right', // where to position the notifications
-            animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-            animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-            dismiss: {
-              duration: 2000,
-              showIcon: true,
-              pauseOnHover: true,
-            },
-          });
+          notify('Login failed', message, 'danger');
         }
       });
     }
+  };
+
+  const notify = (title, message, type) => {
+    store.addNotification({
+      title: title,
+      message: message,
+      type: type, // 'default', 'success', 'info', 'warning'
+      container: 'top-right', // where to position the notifications
+      animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
+      animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
+      dismiss: {
+        duration: 3000,
+        showIcon: true,
+        pauseOnHover: true,
+      },
+    });
   };
 
   return (

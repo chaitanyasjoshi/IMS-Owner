@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactNotification, { store } from 'react-notifications-component';
+import ReactNotification from 'react-notifications-component';
 
 import auth from '../utils/auth';
 import 'react-notifications-component/dist/theme.css';
@@ -93,7 +93,6 @@ export default class Dashboard extends Component {
               return (
                 <Card
                   key={i}
-                  store={store}
                   issuer={ele[0]}
                   issuerUname={ele[1]}
                   dateOfIssue={ele[2]}

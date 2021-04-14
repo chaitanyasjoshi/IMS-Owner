@@ -1,8 +1,14 @@
 import { React, useState } from 'react';
 import multiavatar from '@multiavatar/multiavatar';
+import { store } from 'react-notifications-component';
 
 import 'react-notifications-component/dist/theme.css';
 import 'animate.css';
+
+import { ReactComponent as Lock } from '../assets/icons/lock.svg';
+import { ReactComponent as Check } from '../assets/icons/check.svg';
+import { ReactComponent as Cross } from '../assets/icons/cross.svg';
+import { ReactComponent as Revoke } from '../assets/icons/revoke.svg';
 
 export default function Request(props) {
   const [decryptedData, setDecryptedData] = useState(null);
@@ -15,35 +21,35 @@ export default function Request(props) {
       })
       .then((decryptedMessage) => {
         setDecryptedData(JSON.parse(decryptedMessage));
-        props.store.addNotification({
-          title: 'Decryption successful',
-          message: `Request decrypted successfully`,
-          type: 'success', // 'default', 'success', 'info', 'warning'
-          container: 'top-right', // where to position the notifications
-          animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-          animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-          dismiss: {
-            duration: 2000,
-            showIcon: true,
-            pauseOnHover: true,
-          },
-        });
+        notify(
+          'Decryption successful',
+          'Request decrypted successfully',
+          'success'
+        );
       })
       .catch((error) => {
-        props.store.addNotification({
-          title: 'Decryption failed',
-          message: 'Please sign the transaction to decrypt the request',
-          type: 'danger', // 'default', 'success', 'info', 'warning'
-          container: 'top-right', // where to position the notifications
-          animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-          animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-          dismiss: {
-            duration: 2000,
-            showIcon: true,
-            pauseOnHover: true,
-          },
-        });
+        notify(
+          'Decryption failed',
+          'Please sign the transaction to decrypt the request',
+          'danger'
+        );
       });
+  };
+
+  const notify = (title, message, type) => {
+    store.addNotification({
+      title: title,
+      message: message,
+      type: type, // 'default', 'success', 'info', 'warning'
+      container: 'top-right', // where to position the notifications
+      animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
+      animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
+      dismiss: {
+        duration: 3000,
+        showIcon: true,
+        pauseOnHover: true,
+      },
+    });
   };
 
   return (
@@ -88,18 +94,7 @@ export default function Request(props) {
             onClick={decryptData}
             className='flex items-center justify-between py-1 px-2 m-auto border border-transparent shadow-sm text-sm rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
           >
-            <svg
-              className='h-4 w-4'
-              xmlns='http://www.w3.org/2000/svg'
-              viewBox='0 0 20 20'
-              fill='currentColor'
-            >
-              <path
-                fillRule='evenodd'
-                d='M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z'
-                clipRule='evenodd'
-              />
-            </svg>
+            <Lock className='h-4 w-4' />
             <span className='ml-1'>Decrypt request</span>
           </button>
         </td>
@@ -130,37 +125,16 @@ export default function Request(props) {
                     props.docName,
                     decryptedData
                   )
-                : props.store.addNotification({
-                    title: 'Status updation failed',
-                    message: 'Decrypt request data to update request status',
-                    type: 'danger', // 'default', 'success', 'info', 'warning'
-                    container: 'top-right', // where to position the notifications
-                    animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-                    animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-                    dismiss: {
-                      duration: 3000,
-                      showIcon: true,
-                      pauseOnHover: true,
-                    },
-                  });
+                : notify(
+                    'Status updation failed',
+                    'Decrypt request data to update request status',
+                    'danger'
+                  );
             }}
           >
             <span className='sr-only'>Approve</span>
             {/* Heroicon name: outline/check */}
-            <svg
-              className='h-6 w-6'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
-              />
-            </svg>
+            <Check className='h-6 w-6' />
           </button>
         ) : (
           ''
@@ -176,37 +150,16 @@ export default function Request(props) {
                     props.docName,
                     decryptedData
                   )
-                : props.store.addNotification({
-                    title: 'Status updation failed',
-                    message: 'Decrypt request data to update request status',
-                    type: 'danger', // 'default', 'success', 'info', 'warning'
-                    container: 'top-right', // where to position the notifications
-                    animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-                    animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-                    dismiss: {
-                      duration: 3000,
-                      showIcon: true,
-                      pauseOnHover: true,
-                    },
-                  });
+                : notify(
+                    'Status updation failed',
+                    'Decrypt request data to update request status',
+                    'danger'
+                  );
             }}
           >
             <span className='sr-only'>Decline</span>
             {/* Heroicon name: outline/x-circle */}
-            <svg
-              className='h-6 w-6'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'
-              />
-            </svg>
+            <Cross className='h-6 w-6' />
           </button>
         ) : (
           ''
@@ -222,37 +175,16 @@ export default function Request(props) {
                     props.docName,
                     decryptedData
                   )
-                : props.store.addNotification({
-                    title: 'Status updation failed',
-                    message: 'Decrypt request data to update request status',
-                    type: 'danger', // 'default', 'success', 'info', 'warning'
-                    container: 'top-right', // where to position the notifications
-                    animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-                    animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-                    dismiss: {
-                      duration: 3000,
-                      showIcon: true,
-                      pauseOnHover: true,
-                    },
-                  });
+                : notify(
+                    'Status updation failed',
+                    'Decrypt request data to update request status',
+                    'danger'
+                  );
             }}
           >
             <span className='sr-only'>Revoke</span>
             {/* Heroicon name: outline/exclamation-circle */}
-            <svg
-              className='h-6 w-6'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-              />
-            </svg>
+            <Revoke className='h-6 w-6' />
           </button>
         ) : (
           ''

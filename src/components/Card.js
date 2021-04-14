@@ -1,5 +1,6 @@
 import { React, useState } from 'react';
 import gradient from 'random-gradient';
+import { store } from 'react-notifications-component';
 
 import 'animate.css';
 
@@ -14,35 +15,35 @@ export default function Card(props) {
       })
       .then((decryptedMessage) => {
         setDecryptedData(JSON.parse(decryptedMessage));
-        props.store.addNotification({
-          title: 'Decryption successful',
-          message: `Document decrypted successfully`,
-          type: 'success', // 'default', 'success', 'info', 'warning'
-          container: 'top-right', // where to position the notifications
-          animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-          animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-          dismiss: {
-            duration: 2000,
-            showIcon: true,
-            pauseOnHover: true,
-          },
-        });
+        notify(
+          'Decryption successful',
+          'Document decrypted successfully',
+          'success'
+        );
       })
       .catch((error) => {
-        props.store.addNotification({
-          title: 'Decryption failed',
-          message: 'Please sign the transaction to decrypt the document',
-          type: 'danger', // 'default', 'success', 'info', 'warning'
-          container: 'top-right', // where to position the notifications
-          animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
-          animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
-          dismiss: {
-            duration: 2000,
-            showIcon: true,
-            pauseOnHover: true,
-          },
-        });
+        notify(
+          'Decryption failed',
+          'Please sign the transaction to decrypt the document',
+          'danger'
+        );
       });
+  };
+
+  const notify = (title, message, type) => {
+    store.addNotification({
+      title: title,
+      message: message,
+      type: type, // 'default', 'success', 'info', 'warning'
+      container: 'top-right', // where to position the notifications
+      animationIn: ['animate__animated', 'animate__fadeInDown'], // animate.css classes that's applied
+      animationOut: ['animate__animated', 'animate__fadeOutDown'], // animate.css classes that's applied
+      dismiss: {
+        duration: 3000,
+        showIcon: true,
+        pauseOnHover: true,
+      },
+    });
   };
 
   return (
