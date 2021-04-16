@@ -6,6 +6,10 @@ import auth from '../utils/auth';
 import multiavatar from '@multiavatar/multiavatar';
 import logo from '../assets/logo.png';
 
+import { ReactComponent as Menu } from '../assets/icons/menu.svg';
+import { ReactComponent as Close } from '../assets/icons/close.svg';
+import { ReactComponent as Logout } from '../assets/icons/logout.svg';
+
 export default function Navbar(props) {
   const [showMenu, setMenu] = useState(false);
   return (
@@ -24,44 +28,10 @@ export default function Navbar(props) {
               aria-expanded='false'
             >
               <span className='sr-only'>Open main menu</span>
-              {/* Icon when menu is closed.
-                    Heroicon name: outline/menu
-                    Menu open: "hidden", Menu closed: "block"
-                */}
-              <svg
-                className={`${showMenu ? 'hidden' : 'block'} h-6 w-6`}
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-                aria-hidden='true'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M4 6h16M4 12h16M4 18h16'
-                />
-              </svg>
-              {/* Icon when menu is open.
-                    Heroicon name: outline/x
-                    Menu open: "block", Menu closed: "hidden"
-                */}
-              <svg
-                className={`${showMenu ? 'block' : 'hidden'} h-6 w-6`}
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-                aria-hidden='true'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M6 18L18 6M6 6l12 12'
-                />
-              </svg>
+              {/* Heroicon name: outline/menu*/}
+              <Menu className={`${showMenu ? 'hidden' : 'block'} h-6 w-6`} />
+              {/* Heroicon name: outline/x*/}
+              <Close className={`${showMenu ? 'block' : 'hidden'} h-6 w-6`} />
             </button>
           </div>
           <div className='flex-1 flex items-center justify-center sm:items-stretch sm:justify-start'>
@@ -123,21 +93,7 @@ export default function Navbar(props) {
               >
                 <span className='sr-only'>Logout</span>
                 {/* Heroicon name: outline/logout */}
-                <svg
-                  className='h-6 w-6'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke='currentColor'
-                  aria-hidden='true'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1'
-                  />
-                </svg>
+                <Logout className='h-6 w-6' />
               </button>
             </div>
           </div>

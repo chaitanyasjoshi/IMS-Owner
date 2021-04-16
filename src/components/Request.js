@@ -12,8 +12,10 @@ import { ReactComponent as Revoke } from '../assets/icons/revoke.svg';
 
 export default function Request(props) {
   const [decryptedData, setDecryptedData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const decryptData = () => {
+    setLoading(true);
     window.ethereum
       .request({
         method: 'eth_decrypt',
@@ -95,7 +97,9 @@ export default function Request(props) {
             className='flex items-center justify-between py-1 px-2 m-auto border border-transparent shadow-sm text-sm rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
           >
             <Lock className='h-4 w-4' />
-            <span className='ml-1'>Decrypt request</span>
+            <span className='ml-1'>{`${
+              loading ? 'Decrypting' : 'Decrypt request'
+            }`}</span>
           </button>
         </td>
       )}

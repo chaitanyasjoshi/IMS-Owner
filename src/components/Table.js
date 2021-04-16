@@ -9,7 +9,8 @@ import 'animate.css';
 
 import Request from './Request';
 import Navbar from './Navbar';
-import noRequests from '../assets/no_requests.svg';
+import Spinner from './Spinner';
+import { ReactComponent as NoRequests } from '../assets/no_requests.svg';
 
 export default class Table extends Component {
   constructor(props) {
@@ -17,7 +18,7 @@ export default class Table extends Component {
     this.state = {
       user: null,
       contract: null,
-      requests: [],
+      requests: null,
     };
   }
 
@@ -35,7 +36,6 @@ export default class Table extends Component {
     window.ethereum.on('accountsChanged', async function (accounts) {
       auth.logout(() => {
         this.props.history.push('/');
-        window.location.reload();
       });
     });
 
@@ -219,9 +219,11 @@ export default class Table extends Component {
         <div className='flex flex-col mt-10 max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 font-Poppins'>
           <div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
             <div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
-              {this.state.requests.length === 0 ? (
+              {!this.state.requests ? (
+                <Spinner />
+              ) : this.state.requests.length === 0 ? (
                 <div className='flex flex-col items-center justify-center'>
-                  <img src={noRequests} className='h-96 w-96' />
+                  <NoRequests className='h-96 w-96' />
                   <p className='p-5 text-4xl font-medium'>No requests found!</p>
                   <p className='text-xl'>
                     All your verification requests can be found here

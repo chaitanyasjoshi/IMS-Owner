@@ -6,7 +6,6 @@ import { ProtectedRoute } from '../utils/ProtectedRoute';
 import Authentication from './Authentication';
 import Dashboard from './Dashboard';
 import Table from './Table';
-import Spinner from './Spinner';
 
 export default function App() {
   return (

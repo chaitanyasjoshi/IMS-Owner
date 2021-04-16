@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import ReactNotification, { store } from 'react-notifications-component';
-
 import auth from '../utils/auth';
+
+import Spinner from '../components/Spinner';
+import { ReactComponent as Key } from '../assets/icons/key.svg';
+
 import 'react-notifications-component/dist/theme.css';
 import 'animate.css';
 
 export default function Authentication(props) {
   const [username, setUsername] = useState('');
+  const [contract, setContract] = useState(null);
+  const [address, setAddress] = useState('');
+  const [pubKey, setPubKey] = useState('');
 
   useEffect(() => {
     if (auth.isAuthenticated()) {
@@ -14,58 +20,72 @@ export default function Authentication(props) {
     }
     if (!auth.getContract()) {
       auth.init().then(() => {
-        initialize();
+        setContract(auth.getContract());
+        setAddress(auth.getUser());
       });
     } else {
+      setContract(auth.getContract());
+      setAddress(auth.getUser());
+    }
+  }, [props.history]);
+
+  useEffect(() => {
+    if (contract) {
       initialize();
     }
-  }, []);
+  }, [contract]);
 
   const initialize = () => {
-    window.ethereum.on('accountsChanged', async function (accounts) {
-      auth.logout(() => {
-        props.history.push('/');
-        window.location.reload();
-      });
+    window.ethereum.on('accountsChanged', async (accounts) => {
+      window.location.reload();
     });
 
-    auth
-      .getContract()
-      .events.UserRegistered(
-        { filter: { user: auth.getUser() } },
-        (err, result) => {
-          if (err) {
-            return console.error(err);
-          }
-          notify('Register', 'Registered successfully', 'success');
+    contract.events.UserRegistered(
+      { filter: { user: auth.getUser() } },
+      (err, result) => {
+        if (err) {
+          return console.error(err);
         }
-      );
+        notify('Register', 'Registration successful', 'success');
+      }
+    );
   };
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handleRegistration = () => {
-    let encryptionPublicKey;
-
+  const getPubKey = () => {
     window.ethereum
       .request({
         method: 'eth_getEncryptionPublicKey',
-        params: [auth.getUser()], // you must have access to the specified account
+        params: [address], // you must have access to the specified account
       })
       .then((result) => {
-        encryptionPublicKey = result;
-        auth.register(encryptionPublicKey, username);
+        setPubKey(result);
       })
       .catch((error) => {
         if (error.code === 4001) {
           // EIP-1193 userRejectedRequest error
-          console.log('We can encrypt anything without the key.');
+          notify(
+            'Access denied',
+            'We cannot encrypt your documents without public encryption key',
+            'danger'
+          );
         } else {
           console.error(error);
         }
       });
+  };
+
+  const handleRegistration = () => {
+    if (username === '') {
+      notify('Invalid username', 'Username cannot be empty', 'danger');
+    } else if (pubKey === '') {
+      notify(
+        'Invalid key',
+        'We need your public encryption key to encrypt your documents',
+        'danger'
+      );
+    } else {
+      auth.register(pubKey, username);
+    }
   };
 
   const handleLogin = () => {
@@ -98,6 +118,10 @@ export default function Authentication(props) {
     });
   };
 
+  if (!contract) {
+    return <Spinner />;
+  }
+
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-Poppins'>
       <ReactNotification />
@@ -114,37 +138,60 @@ export default function Authentication(props) {
         </div>
         <div className='shadow overflow-hidden rounded-md'>
           <div className='px-4 py-5 bg-white sm:p-10'>
-            <label
-              htmlFor='username'
-              className='block text-sm font-medium text-gray-700'
-            >
-              Username<span className='text-red-500'>*</span>
-            </label>
-            <input
-              type='text'
-              name='username'
-              id='username'
-              autoComplete='off'
-              value={username}
-              autoCorrect='off'
-              spellCheck={false}
-              onChange={handleUsernameChange}
-              className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
-            />
-            <div className='flex items-center justify-between'>
+            <div className='pb-7 border-b-2 border-gray-200'>
+              <label className='block text-sm font-medium text-gray-700'>
+                Address
+              </label>
+              <input
+                type='text'
+                disabled
+                value={address}
+                className='mt-1 select-none cursor-not-allowed disabled:opacity-50 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+              />
+              <label className='mt-2 block text-sm font-medium text-gray-700'>
+                Username<span className='text-red-500'>*</span>
+              </label>
+              <input
+                type='text'
+                autoComplete='off'
+                value={username}
+                spellCheck={false}
+                onChange={(e) => setUsername(e.target.value)}
+                className='mt-1 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+              />
               <button
                 name='login'
-                id='login'
                 onClick={handleLogin}
-                className='mr-2 sm:mr-5 mt-8 p-2 w-full border border-transparent shadow-sm text-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                className='mt-4 p-3 w-full shadow-sm text-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
               >
                 Login
               </button>
+            </div>
+            <div className='pt-5'>
+              <div className='flex'>
+                <div className='w-full'>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Public encryption key<span className='text-red-500'>*</span>
+                  </label>
+                  <input
+                    type='password'
+                    disabled
+                    value={pubKey}
+                    className='mt-1 select-none cursor-not-allowed text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                  />
+                </div>
+                <button
+                  name='key'
+                  onClick={getPubKey}
+                  className='mt-6 ml-3 h-10 p-2 shadow-sm text-sm rounded-md bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                >
+                  <Key className='h-6 w-6 text-white' />
+                </button>
+              </div>
               <button
                 name='register'
-                id='register'
                 onClick={handleRegistration}
-                className='ml-2 sm:ml-5 mt-8 p-2 w-full float-right border border-transparent shadow-sm text-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                className='mt-4 p-3 w-full shadow-sm text-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
               >
                 Register
               </button>

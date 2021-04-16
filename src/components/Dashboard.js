@@ -7,13 +7,14 @@ import 'animate.css';
 
 import Navbar from './Navbar';
 import Card from './Card';
-import noDocs from '../assets/no_docs.svg';
+import Spinner from './Spinner';
+import { ReactComponent as NoDocs } from '../assets/no_docs.svg';
 
 export default class Dashboard extends Component {
   state = {
     user: null,
     contract: null,
-    documents: [],
+    documents: null,
   };
 
   componentDidMount() {
@@ -30,7 +31,6 @@ export default class Dashboard extends Component {
     window.ethereum.on('accountsChanged', async function (accounts) {
       auth.logout(() => {
         this.props.history.push('/');
-        window.location.reload();
       });
     });
 
@@ -58,7 +58,7 @@ export default class Dashboard extends Component {
       .call({ from: this.state.user })
       .then(
         ({ 0: issuer, 1: issuerUname, 2: dateOfIssue, 3: name, 4: data }) => {
-          const docs = [];
+          const documents = [];
           for (let index = 0; index < issuer.length; index++) {
             let ele = [
               issuer[index],
@@ -67,9 +67,9 @@ export default class Dashboard extends Component {
               name[index],
               data[index],
             ];
-            docs.push(ele);
+            documents.push(ele);
           }
-          this.setState({ documents: docs });
+          this.setState({ documents });
         }
       );
   };
@@ -80,9 +80,11 @@ export default class Dashboard extends Component {
         <Navbar user={this.state.user} history={this.props.history} />
         <ReactNotification className='font-Poppins' />
         <div className='mt-6 flex flex-wrap max-w-7xl mx-auto font-Poppins'>
-          {this.state.documents.length === 0 ? (
+          {!this.state.documents ? (
+            <Spinner />
+          ) : this.state.documents.length === 0 ? (
             <div className='flex flex-col w-full items-center justify-center'>
-              <img src={noDocs} className='h-96 w-96' />
+              <NoDocs className='h-96 w-96' />
               <p className='p-5 text-4xl font-medium'>No documents found!</p>
               <p className='text-xl'>
                 Visit issuer's website to issue your document

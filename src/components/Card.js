@@ -2,18 +2,23 @@ import { React, useState } from 'react';
 import gradient from 'random-gradient';
 import { store } from 'react-notifications-component';
 
+import { ReactComponent as Lock } from '../assets/icons/lock.svg';
+
 import 'animate.css';
 
 export default function Card(props) {
   const [decryptedData, setDecryptedData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const decryptData = () => {
+    setLoading(true);
     window.ethereum
       .request({
         method: 'eth_decrypt',
         params: [props.data, props.user],
       })
       .then((decryptedMessage) => {
+        setLoading(false);
         setDecryptedData(JSON.parse(decryptedMessage));
         notify(
           'Decryption successful',
@@ -83,19 +88,10 @@ export default function Card(props) {
                 onClick={decryptData}
                 className='flex items-center justify-between p-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
               >
-                <svg
-                  className='h-4 w-4'
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 20 20'
-                  fill='currentColor'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-                <span className='ml-1'>Decrypt document</span>
+                <Lock className='h-4 w-4' />
+                <span className='ml-1'>{`${
+                  loading ? 'Decrypting' : 'Decrypt document'
+                }`}</span>
               </button>
             </div>
           )}
