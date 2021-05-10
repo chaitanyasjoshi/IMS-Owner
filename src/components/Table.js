@@ -44,8 +44,18 @@ export default class Table extends Component {
       () => {
         this.fetchRequests();
 
+        this.state.contract.events.RequestStatusUpdated(
+          { filter: { owner: this.state.user }, fromBlock: 'latest' },
+          (err, result) => {
+            if (err) {
+              return console.error(err);
+            }
+            this.fetchRequests();
+          }
+        );
+
         this.state.contract.events.RequestGenerated(
-          { filter: { owner: this.state.user } },
+          { filter: { owner: this.state.user }, fromBlock: 'latest' },
           (err, result) => {
             if (err) {
               return console.error(err);
@@ -217,8 +227,8 @@ export default class Table extends Component {
         <Navbar user={this.state.user} history={this.props.history} />
         <ReactNotification className='font-Poppins' />
         <div className='flex flex-col mt-10 max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 font-Poppins'>
-          <div className='-my-2 sm:-mx-6 lg:-mx-8'>
-            <div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
+          <div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
+            <div className='py-2 min-w-full sm:px-6 lg:px-8'>
               {!this.state.requests ? (
                 <Spinner />
               ) : this.state.requests.length === 0 ? (
@@ -230,7 +240,7 @@ export default class Table extends Component {
                   </p>
                 </div>
               ) : (
-                <div className='shadow border-b border-gray-200 sm:rounded-lg animate__animated animate__fadeInUp'>
+                <div className='shadow border-b border-gray-200 sm:rounded-lg'>
                   <table className='min-w-full divide-y divide-gray-200'>
                     <tbody className='bg-white divide-y divide-gray-200'>
                       {this.state.requests.map((ele, i) => {

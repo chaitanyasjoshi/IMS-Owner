@@ -39,7 +39,7 @@ export default class Dashboard extends Component {
       () => {
         this.fetchDocuments();
         this.state.contract.events.DocumentIssued(
-          { filter: { owner: this.state.user } },
+          { filter: { owner: this.state.user }, fromBlock: 'latest' },
           (err, result) => {
             if (err) {
               return console.error(err);
